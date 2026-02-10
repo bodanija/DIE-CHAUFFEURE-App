@@ -1,7 +1,15 @@
 import { GoogleGenAI } from "@google/genai";
 import { LocationData } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Helper to safely get the AI instance. 
+// This prevents the app from crashing on startup if process is undefined (common in browser environments).
+const getAi = () => {
+  // We assume process.env.API_KEY is available via the build system (Vite/Next/etc).
+  // If running in a raw environment where process is undefined, we handle it gracefully 
+  // so the UI can at least load before failing on the specific action.
+  const apiKey = (typeof process !== 'undefined' && process.env) ? process.env.API_KEY : '';
+  return new GoogleGenAI({ apiKey });
+};
 
 export interface DestinationResult {
   text: string;
@@ -18,6 +26,7 @@ export const findDestination = async (
   currentLocation?: LocationData
 ): Promise<DestinationResult> => {
   try {
+    const ai = getAi();
     const prompt = `Find exact details for this location: "${query}". Provide the full, formatted address.`;
     
     const toolConfig: any = {};
@@ -64,6 +73,7 @@ export const findDestination = async (
 
 export const calculateRouteInfo = async (start: string, end: string): Promise<RouteInfo> => {
   try {
+    const ai = getAi();
     const prompt = `Calculate the driving distance and duration between "${start}" and "${end}". 
     Return strictly JSON with 'distanceKm' (number) and 'durationMinutes' (number).`;
 
