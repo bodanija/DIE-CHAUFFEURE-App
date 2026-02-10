@@ -1,0 +1,7 @@
+{
+  "name": "DIE CHAUFFEURE",
+  "description": "Exklusive Heimfahr-App für Kunden und Chauffeure mit Geolokalisierung und Zielsuche.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
